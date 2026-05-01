@@ -220,13 +220,14 @@
 
         .alive-bar { position: relative; width: 6px; height: 18px; border-radius: 1px; border: 1px solid #000000; box-sizing: border-box; background-color: #111111; overflow: hidden; transform: translateZ(0); }
         .hp-fill-small { 
-            position: absolute; bottom: 0; left: 0; width: 100%; 
-            height: 100%;
-            transform-origin: bottom;
-            transform: scaleY(1);
-            transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.4s;
-            will-change: transform, background-color;
-        }
+        position: absolute; bottom: 0; left: 0; width: 100%; 
+        height: 100%;
+        transform-origin: bottom;
+        transform: scaleY(1);
+        /* 🟢 เอา transition ของการกระพริบมารวมไว้ตรงนี้ */
+        transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.4s, opacity 0.7s ease-in-out, filter 0.5s ease-in-out;
+        will-change: transform, background-color, opacity, filter;
+}
 
         .player-list { padding: 2px 8px 6px 34px; display: flex; flex-direction: column; gap: 5px; }
         .player-item { display: grid; grid-template-columns: minmax(0, 1fr) 110px; align-items: center; gap: 10px; width: 100%; }
@@ -251,8 +252,9 @@
             width: 100%;
             transform-origin: left;
             transform: scaleX(1);
-            transition: transform 0.4s ease-out, background-color 0.4s;
-            will-change: transform, background-color;
+            /* 🟢 เอา transition ของการกระพริบมารวมไว้ตรงนี้ */
+            transition: transform 0.4s ease-out, background-color 0.4s, opacity 0.7s ease-in-out, filter 0.5s ease-in-out;
+            will-change: transform, background-color, opacity, filter;
         }
 
         .data-layer { position: relative; z-index: 5; width: 100%; }
@@ -323,15 +325,16 @@
             opacity: 1;
         }
 
-        /* 🟢 แอนิเมชันสำหรับผู้เล่นที่ล้ม (Knocked) ให้หลอดเลือดสีแดงกระพริบ */
-        @keyframes pulse-knocked {
-            0%, 100% { opacity: 1; filter: brightness(1); }
-             50% { opacity: 0.3; filter: brightness(1.5); } 
-}
+    /* 🟢 แอนิเมชันสำหรับหลอดเลือดคนล้ม (แยกมารับคำสั่งจาก knocked-flash) */
         .is-knocked {
-            animation: pulse-knocked 0.8s infinite ease-in-out !important; 
-            will-change: opacity, filter;
-}
+            transition: opacity 0.9s ease-in-out, filter 0.9s ease-in-out;
+            opacity: 1;
+        }
+
+        .scoreboard-container.knocked-flash .is-knocked {
+            opacity: 0.2 !important; 
+            filter: brightness(1.5);
+        }
         
         #error-msg { color: #f59600; font-size: 14px; background: #222; padding: 15px; border: 1px solid #f59600; display: none; }
         #preload-images { display: none; }
@@ -397,13 +400,21 @@
             }
         } catch(e) {}
 
-        // 🟢 ระบบควบคุมแอนิเมชันกระพริบ (Global Sync) ใช้ควบคุมทั้ง Bluezone และ Knocked
+   // 🟢 ระบบกระพริบแยกสำหรับคนล้ม Bluezone (กระพริบไวๆ เป็นไฟฉุกเฉิน)
         setInterval(() => {
             const container = document.getElementById('main-container');
             if(container) {
                 container.classList.toggle('global-flash');
             }
-        }, 750); 
+        }, 1000); /* ปรับความเร็ว Bluezone ตรงนี้ (1000 = 1 วินาที) */
+
+        // 🟢 ระบบกระพริบแยกสำหรับคนล้ม Knocked (กระพริบไวๆ เป็นไฟฉุกเฉิน)
+        setInterval(() => {
+            const container = document.getElementById('main-container');
+            if(container) {
+                container.classList.toggle('knocked-flash');
+            }
+        }, 1000); /* ปรับความเร็วหลอดเลือดแดงล้มตรงนี้ (400 = 0.4 วินาที) */
 
         function renderScoreboard(data) {
             if (!data || !data.data || !data.data.teams) return;
