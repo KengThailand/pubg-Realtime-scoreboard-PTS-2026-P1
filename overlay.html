@@ -108,7 +108,7 @@
         /* 🟢 เซ็ตพื้นหลังให้ดำโปร่งแสง ทะลุเห็นภาพในเกม */
         .team-row-inner.eliminated-team .bg-layer { 
             background-color: #000000 !important; 
-            opacity: 0.9 !important; /* 🟢 ปรับเป็น 0.8 ตามที่รีเควสครับ */
+            opacity: 0.9 !important; 
         }
 
         /* 🟢 เซ็ตสีตัวหนังสือและตัวเลขของทีมที่ตายให้เป็นสีเทา */
@@ -184,12 +184,6 @@
             0% { transform: translateY(120%); opacity: 0; }
             100% { transform: translateY(0); opacity: 1; }
         }
-        /* -------------------------------------------------------------------------
-           🎯 โซนปรับแต่งตำแหน่ง (X, Y) แยกอิสระสำหรับกระดานหลัก 
-           วิธีใช้: แก้ตัวเลขใน translate(แกน X, แกน Y) 
-                   - แกน X (บวกไปขวา, ลบไปซ้าย)
-                   - แกน Y (บวกเลื่อนลง, ลบเลื่อนขึ้น)
-        -------------------------------------------------------------------------- */
 
         .col-rank, .col-team, .col-alive, .col-pts, .col-kills { display: flex; align-items: center; height: 100%; line-height: 1; }
         
@@ -242,19 +236,18 @@
         /* ------------------------------------------------------------------------- */
 
 
-        .alive-bar { position: relative; width: 6px; height: 18px; border-radius: 1px; border: 1px solid #000000; box-sizing: border-box; background-color: #111111; overflow: hidden; transform: translateZ(0); }
+        .alive-bar { position: relative; width: 6px; height: 20px; border-radius: 1px; border: 1px solid #000000; box-sizing: border-box; background-color: #111111; overflow: hidden; transform: translateZ(0); }
         .hp-fill-small { 
-        position: absolute; bottom: 0; left: 0; width: 100%; 
-        height: 100%;
-        transform-origin: bottom;
-        transform: scaleY(1);
-        /* 🟢 เอา transition ของการกระพริบมารวมไว้ตรงนี้ */
-        transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.4s, opacity 0.7s ease-in-out, filter 0.5s ease-in-out;
-        will-change: transform, background-color, opacity, filter;
-}
+            position: absolute; bottom: 0; left: 0; width: 100%; 
+            height: 100%;
+            transform-origin: bottom;
+            transform: scaleY(1);
+            transition: transform 0.4s ease-out, background-color 0.4s;
+            will-change: transform, background-color;
+        }
 
         .player-list { padding: 2px 8px 6px 34px; display: flex; flex-direction: column; gap: 5px; }
-        .player-item { display: grid; grid-template-columns: minmax(0, 1fr) 110px; align-items: center; gap: 10px; width: 100%; }
+        .player-item { display: grid; grid-template-columns: minmax(0, 1fr) 130px; align-items: center; gap: 10px; width: 100%; }
         
         .player-name { 
             font-size: 16px; 
@@ -268,7 +261,7 @@
             display: block; 
             transform: translateY(1px); 
         }
-        .player-name.dead { color: var(--c-team-text-dead); color: #6b6b6b; opacity: 1; }
+        .player-name.dead { color: var(--c-team-text-dead); color: #7a7a7a; opacity: 1; }
         
         .player-hp-bar { height: 10px; background-color: #444; border: 1px solid #000; position: relative; overflow: hidden; transform: translateZ(0);transform: translateY(1px); }
         .player-hp-fill { 
@@ -276,9 +269,8 @@
             width: 100%;
             transform-origin: left;
             transform: scaleX(1);
-            /* 🟢 เอา transition ของการกระพริบมารวมไว้ตรงนี้ */
-            transition: transform 0.4s ease-out, background-color 0.4s, opacity 0.7s ease-in-out, filter 0.5s ease-in-out;
-            will-change: transform, background-color, opacity, filter;
+            transition: transform 0.4s ease-out, background-color 0.4s;
+            will-change: transform, background-color;
         }
 
         .data-layer { position: relative; z-index: 5; width: 100%; }
@@ -323,7 +315,7 @@
             background-position: center;
             background-repeat: no-repeat; 
             color: #ffffff; 
-            display: flex; align-items: center; justify-content: center; font-size: 15px; transform: translateX(-105%); 
+            display: flex; align-items: center; justify-content: center; font-size: 18px; transform: translateX(-105%); 
             animation: slide-pause-out-banner 4s ease-in-out forwards;
             will-change: transform;
         }
@@ -349,15 +341,15 @@
             opacity: 1;
         }
 
-    /* 🟢 แอนิเมชันสำหรับหลอดเลือดคนล้ม (แยกมารับคำสั่งจาก knocked-flash) */
+        /* 🟢 แอนิเมชันสำหรับหลอดเลือดคนล้ม (แยกมารับคำสั่งจาก knocked-flash) */
         .is-knocked {
-            transition: opacity 0.9s ease-in-out, filter 0.9s ease-in-out;
+            transition: opacity 0.8s ease-in-out, filter 0.8s ease-in-out !important;
             opacity: 1;
         }
 
         .scoreboard-container.knocked-flash .is-knocked {
-            opacity: 0.2 !important; 
-            filter: brightness(1.5);
+            opacity: 0.1 !important; 
+            filter: brightness(1);
         }
         
         #error-msg { color: #f59600; font-size: 14px; background: #222; padding: 15px; border: 1px solid #f59600; display: none; }
@@ -406,19 +398,15 @@
         let previousAliveCount = 0; 
         
         let teamBluechipCounts = {};
-        // 🟢 เก็บสถานะ ว่ามีคนกำลังรอฟื้นไหม (true/false) 
         let isWaitingForRevive = {}; 
         let matchEndTime = 0;
         
-        // 🟢 ฟังก์ชันสำหรับแอนิเมชันตัวเลขเลื่อนขึ้น (ทำเป็น Slot Machine)
         function animateValueChange(element, newValue) {
             let currentVal = element.getAttribute('data-val');
-            // ถ้าค่าเปลี่ยน ให้รันแอนิเมชันเลื่อน
             if (currentVal !== null && currentVal != newValue) {
                 element.innerHTML = `<div class="score-anim-container"><div class="score-old-slide">${currentVal}</div><div class="score-new-slide">${newValue}</div></div>`;
                 element.setAttribute('data-val', newValue);
                 
-                // คืนค่าเป็นข้อความปกติเมื่อแอนิเมชันจบ
                 setTimeout(() => {
                     if (element.getAttribute('data-val') == newValue) {
                         element.innerHTML = newValue;
@@ -429,10 +417,9 @@
                 element.setAttribute('data-val', newValue);
             }
         }
-        // 🟢 ตัวแปรสำหรับเช็คการสลับกลุ่มทีม
+
         let lastKnownTeams = [];
 
-        // โหลด State ของ Top4 จาก localStorage
         try {
             const savedTop4 = JSON.parse(localStorage.getItem(`pubg_finalTop4_${tourneyId || 'default'}`) || "[]");
             const savedOrder = JSON.parse(localStorage.getItem(`pubg_top4Order_${tourneyId || 'default'}`) || "[]");
@@ -443,21 +430,15 @@
             }
         } catch(e) {}
 
-   // 🟢 ระบบกระพริบแยกสำหรับคนล้ม Bluezone (กระพริบไวๆ เป็นไฟฉุกเฉิน)
         setInterval(() => {
             const container = document.getElementById('main-container');
-            if(container) {
-                container.classList.toggle('global-flash');
-            }
-        }, 1000); /* ปรับความเร็ว Bluezone ตรงนี้ (1000 = 1 วินาที) */
+            if(container) container.classList.toggle('global-flash');
+        }, 1000); 
 
-        // 🟢 ระบบกระพริบแยกสำหรับคนล้ม Knocked (กระพริบไวๆ เป็นไฟฉุกเฉิน)
         setInterval(() => {
             const container = document.getElementById('main-container');
-            if(container) {
-                container.classList.toggle('knocked-flash');
-            }
-        }, 1000); /* ปรับความเร็วหลอดเลือดแดงล้มตรงนี้ (400 = 0.4 วินาที) */
+            if(container) container.classList.toggle('knocked-flash');
+        }, 1000); 
 
         function renderScoreboard(data) {
             if (!data || !data.data || !data.data.teams) return;
@@ -467,24 +448,19 @@
             const aliveTeamsCountCheck = data.data.teams.filter(t => t.elimination === false || (t.players && t.players.some(p => p.isAlive))).length;
             const currentTeamNamesList = data.data.teams.map(t => t.team_name);
             
-            // 🟢 ตรวจจับการเปลี่ยนกลุ่ม (ถ้าทีมเดิมหายไปเกินครึ่ง แปลว่าเริ่มห้องใหม่กลุ่มใหม่)
             let isGroupChanged = false;
             if (!isFirstRender && lastKnownTeams.length > 0) {
                 const matchedCount = currentTeamNamesList.filter(name => lastKnownTeams.includes(name)).length;
-                if (matchedCount < 8) { 
-                    isGroupChanged = true; 
-                }
+                if (matchedCount < 8) isGroupChanged = true; 
             }
             lastKnownTeams = currentTeamNamesList;
 
-            // ตรวจจับการเริ่มแมตช์ใหม่หรือสลับกลุ่ม
             let isMatchReset = false;
             if (isFirstRender || isGroupChanged || (previousAliveCount < 10 && aliveTeamsCountCheck >= 14)) {
                 isMatchReset = true;
             }
             previousAliveCount = aliveTeamsCountCheck;
 
-            // ล้างประวัติเกมส์เมื่อขึ้นแมตช์ใหม่
             if (isMatchReset) {
                 matchEndTime = 0;
                 top4EntryTime = 0;
@@ -501,19 +477,15 @@
                 localStorage.removeItem(`pubg_finalTop4_${tourneyId || 'default'}`);
                 localStorage.removeItem(`pubg_top4Order_${tourneyId || 'default'}`);
 
-                // 🟢 ล้างหน้าจอกระดานทิ้งทั้งหมด เพื่อวาดใหม่ไม่ให้ทีมเก่าค้าง
                 const sb = document.getElementById('scoreboard');
                 if (sb) sb.innerHTML = '';
             }
 
             const scoreboard = document.getElementById('scoreboard');
 
-            // 🟢 ดักเก็บตก: เตะกล่องทีมที่ไม่มีในรายชื่อแมตช์รอบนี้ออกจากจอทันที
             const activeTeamIds = currentTeamNamesList.map(name => `team-${name}`);
             scoreboard.querySelectorAll('.team-wrapper').forEach(row => {
-                if (!activeTeamIds.includes(row.id)) {
-                    row.remove();
-                }
+                if (!activeTeamIds.includes(row.id)) row.remove();
             });
 
             const oldPositions = {};
@@ -544,7 +516,6 @@
             }
 
             const isTop4Period = !isMatchEnded && !showFinalStandings && aliveTeamsCount <= 4 && (isMatchReset || (now - top4EntryTime >= elimDurationMs));
-
             const matchTop4Teams = data.data.teams.filter(t => t.match_live_rank <= 4).map(t => t.team_name);
 
             if (aliveTeamsCount <= 4 && !isMatchReset) {
@@ -579,8 +550,11 @@
 
                 let teamIsAlive = false, teamInBlueZone = false, revivedPlayersQueue = [];
                 let dotsHtml = '', playerDetailsHtml = ''; 
+                
+                // 🟢 แก้ Bug บอร์ดหายตอน TOP4: ดึงตัวแปรออกมาประกาศด้านนอก block ป้องกัน ReferenceError
+                let sortedForDots = [];
+                let sortedForTop4List = [];
 
-                // 🌟 1. ดักการ "กดใช้เครื่อง" 
                 let currentBluechipCount = team.useBluechipCount || team.revive_count || team.bluechip_revive || team.revives || 0;
                 
                 if (teamBluechipCounts[team.team_name] === undefined) {
@@ -596,12 +570,13 @@
                 let prefixRegex = new RegExp('^' + safeTeamTag + '[_\\-\\s]?', 'i');
 
                 if (team.players) {
-                    let sortedForDots = [...team.players].sort((a, b) => {
+                    // 🟢 ตอนนี้ JavaScript จะจำค่า sortedForDots ได้แม้หลุดจาก block นี้ไปแล้ว
+                    sortedForDots = [...team.players].sort((a, b) => {
                         if (a.isAlive !== b.isAlive) return a.isAlive ? -1 : 1; 
                         return (b.health || 0) - (a.health || 0); 
                     });
 
-                    let sortedForTop4List = [...team.players].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                    sortedForTop4List = [...team.players].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
                     sortedForDots.forEach(p => {
                         let isCurrentlyAlive = (p.isAlive === true || p.isAlive === 1 || p.isAlive === "true");
@@ -760,13 +735,49 @@
                     `;
                 } else {
                     rowWrapper.querySelector('.col-rank').innerText = team.total_pts_rank;
-                    rowWrapper.querySelector('.col-alive').innerHTML = dotsHtml;
                     
-                    // 🟢 เรียกใช้แอนิเมชันตัวเลขเลื่อนขึ้นแทนการสลับค่าเฉยๆ
+                    const existingDots = rowWrapper.querySelectorAll('.alive-bar .hp-fill-small');
+                    if (existingDots.length === sortedForDots.length) {
+                        sortedForDots.forEach((p, i) => {
+                            let isCurrentlyAlive = (p.isAlive === true || p.isAlive === 1 || p.isAlive === "true");
+                            const hpPercent = isCurrentlyAlive ? (p.isGroggy ? 1 : (typeof p.health === 'number' ? p.health / 100 : 1)) : 0;
+                            const colorS = isCurrentlyAlive ? (p.isGroggy ? 'var(--c-tick-knocked)' : 'var(--c-tick-alive)') : 'transparent';
+                            
+                            existingDots[i].style.transform = `scaleY(${hpPercent})`;
+                            existingDots[i].style.backgroundColor = colorS;
+                            if (isCurrentlyAlive && p.isGroggy) existingDots[i].classList.add('is-knocked');
+                            else existingDots[i].classList.remove('is-knocked');
+                        });
+                    } else {
+                        rowWrapper.querySelector('.col-alive').innerHTML = dotsHtml;
+                    }
+                    
                     animateValueChange(rowWrapper.querySelector('.col-pts'), team.total_pts_with_penalty);
                     animateValueChange(rowWrapper.querySelector('.col-kills'), team.match_kills);
                     
-                    rowWrapper.querySelector('.player-list').innerHTML = playerDetailsHtml;
+                    const existingPlayers = rowWrapper.querySelectorAll('.player-item');
+                    if (existingPlayers.length === sortedForTop4List.length) {
+                        sortedForTop4List.forEach((p, i) => {
+                            let isCurrentlyAlive = (p.isAlive === true || p.isAlive === 1 || p.isAlive === "true");
+                            let rawName = p.name || '';
+                            let cleanName = rawName.replace(prefixRegex, '');
+                            
+                            const hpPercent = isCurrentlyAlive ? (p.isGroggy ? 1 : (typeof p.health === 'number' ? p.health / 100 : 1)) : 0;
+                            const colorL = isCurrentlyAlive ? (p.isGroggy ? 'var(--c-hp-knocked)' : 'var(--c-hp-alive)') : 'transparent';
+                            
+                            const nameDiv = existingPlayers[i].querySelector('.player-name');
+                            nameDiv.innerText = cleanName;
+                            if (isCurrentlyAlive) nameDiv.classList.remove('dead'); else nameDiv.classList.add('dead');
+                            
+                            const fillDiv = existingPlayers[i].querySelector('.player-hp-fill');
+                            fillDiv.style.transform = `scaleX(${hpPercent})`;
+                            fillDiv.style.backgroundColor = colorL;
+                            if (isCurrentlyAlive && p.isGroggy) fillDiv.classList.add('is-knocked');
+                            else fillDiv.classList.remove('is-knocked');
+                        });
+                    } else {
+                        rowWrapper.querySelector('.player-list').innerHTML = playerDetailsHtml;
+                    }
                 }
                 
             });
